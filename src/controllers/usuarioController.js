@@ -1,7 +1,7 @@
 import model from "../models/usuarioModel.js";
 
 const validar = (usuario) => {
-    let errors = []
+  let errors = [];
   for (const key in usuario) {
     if (usuario.hasOwnProperty(key)) {
       if (
@@ -9,11 +9,11 @@ const validar = (usuario) => {
         usuario[key] === undefined ||
         usuario[key] === ""
       ) {
-        errors.push(`${key} esta incorreto`)
+        errors.push(`${key} esta incorreto`);
       }
     }
     if (errors.length > 0) {
-        throw new Error(errors);
+      throw new Error(errors);
     }
   }
 };
@@ -50,6 +50,7 @@ class Controller {
       };
       //valida o objeto do usuario para garantir que todos os dados foram preenchidos
       validar(usuario);
+      //Envia o objeto para a model e aguarda a resposta
       const resultado = await model.cadastro(usuario);
       console.log(
         resultado.rowCount > 0 ? "Inserido com sucesso" : "Sem alteração"
@@ -67,14 +68,15 @@ class Controller {
   };
 
   listar = async (req, res) => {
+    const {tipo} = req.params;
     try {
-      const listagem = await model.listar();
+      const listagem = await model.listar(tipo);
       res.status(200).json({
         data: listagem,
       });
     } catch (err) {
       res.status(400).json({
-        error: "Não foi possivel listar",
+        error: err.message,
       });
       console.log(err);
     }
@@ -94,7 +96,7 @@ class Controller {
       });
     } catch (err) {
       res.status(400).json({
-        error: "Não foi possivel atualizar",
+        error: err.message,
       });
       console.log(err);
     }
@@ -109,7 +111,7 @@ class Controller {
       });
     } catch (err) {
       res.status(400).json({
-        error: "Não foi possivel deletar",
+        error: err.message,
       });
       console.log(err);
     }

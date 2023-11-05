@@ -16,9 +16,9 @@ class Model {
         return resultado;
     }
     
-     listar = async() =>{
+     listar = async(tipo) =>{
         const query ={
-            text:"SELECT * FROM USUARIO;"
+            text: `SELECT * FROM ${tipo};`
         }
         const listagem = await pool.query(query);
         return listagem.rows;

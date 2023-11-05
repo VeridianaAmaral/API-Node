@@ -3,10 +3,9 @@ const rota = express.Router();
 import controller from "../controllers/usuarioController.js";
 
 rota.post("/cadastro", (req, res) =>{
-    console.log("Em post do usuario")
     controller.cadastro(req, res)
 });
-rota.get("/listagem", (req,res)=>{
+rota.get("/listagem/:tipo", (req,res)=>{
     controller.listar(req,res)
 });
 rota.put("/update", (req,res) => {
