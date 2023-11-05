@@ -1,6 +1,7 @@
 import model from "../models/usuarioModel.js";
 
 const validar = (usuario) => {
+    let errors = []
   for (const key in usuario) {
     if (usuario.hasOwnProperty(key)) {
       if (
@@ -8,8 +9,11 @@ const validar = (usuario) => {
         usuario[key] === undefined ||
         usuario[key] === ""
       ) {
-        throw new Error(`${key} esta incorreto`);
+        errors.push(`${key} esta incorreto`)
       }
+    }
+    if (errors.length > 0) {
+        throw new Error(errors);
     }
   }
 };
