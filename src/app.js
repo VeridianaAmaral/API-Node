@@ -1,8 +1,8 @@
-const express = require("express");
+import express from "express";
+import rota from "./routes/rota.js";
+import pool from "./database/db.js";
 const app = express();
 const baseUrl = "/api/v1";
-const rota = require("./routes/rota");
-const pool = require("./database/db");
 
 app.use(express.json());
 app.use(baseUrl, rota);
@@ -15,4 +15,4 @@ pool.connect((err) => {
     }
 })
 
-module.exports = app;
+export default app;

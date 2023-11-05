@@ -1,10 +1,19 @@
-const express = require("express");
+import express from 'express';
 const rota = express.Router();
-const controller = require("../controllers/usuarioController");
+import controller from "../controllers/usuarioController.js";
 
-rota.post("/cadastro", controller.cadastro, (req, res) =>{});
-rota.get("/listagem", controller.listar, (req,res)=>{});
-rota.put("/update", controller.update, (req,res) => {});
-rota.delete("/deletar/:id", controller.apagar, (req,res) =>{});
+rota.post("/cadastro", (req, res) =>{
+    console.log("Em post do usuario")
+    controller.cadastro(req, res)
+});
+rota.get("/listagem", (req,res)=>{
+    controller.listar(req,res)
+});
+rota.put("/update", (req,res) => {
+    controller.update(req, res)
+});
+rota.delete("/deletar/:id", (req,res) =>{
+    controller.apagar(req,res)
+});
 
-module.exports = rota;
+export default rota;

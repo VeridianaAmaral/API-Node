@@ -1,71 +1,115 @@
-const model = require("../models/usuarioModel");
+import model from "../models/usuarioModel.js";
 
-exports.cadastro = async(req,res) => {
-    try {
-        const {nome , senha} = req.body;
-        const usuario = {
-            nome,
-            senha
-        }
-        const resultado = await model.cadastro(usuario);
-        console.log(resultado);
-        res.status(201).json({
-            message:"Inserido com sucesso",
-            data:resultado.rows[0]
-        })
-    } catch (err) {
-        res.status(400).json({
-            error:"Não foi possivel inserir"
-        })
-        console.log(err)
+const validar = (usuario) => {
+  for (const key in usuario) {
+    if (usuario.hasOwnProperty(key)) {
+      if (
+        usuario[key] === null ||
+        usuario[key] === undefined ||
+        usuario[key] === ""
+      ) {
+        throw new Error(`${key} esta incorreto`);
+      }
     }
+  }
+};
+
+class Controller {
+  cadastro = async (req, res) => {
+    try {
+      //Desestrutura o req.body para capturar os dados
+      const {
+        nome,
+        email,
+        senha,
+        data_nascimento,
+        cep,
+        uf,
+        cidade,
+        bairro,
+        logradouro,
+        numero,
+        consumidor,
+      } = req.body;
+      const usuario = {
+        nome,
+        email,
+        senha,
+        data_nascimento,
+        cep,
+        uf,
+        cidade,
+        bairro,
+        logradouro,
+        numero,
+        consumidor,
+      };
+      //valida o objeto do usuario para garantir que todos os dados foram preenchidos
+      validar(usuario);
+      const resultado = await model.cadastro(usuario);
+      console.log(
+        resultado.rowCount > 0 ? "Inserido com sucesso" : "Sem alteração"
+      );
+      res.status(201).json({
+        message: "Inserido com sucesso",
+        data: resultado.rows[0],
+      });
+    } catch (err) {
+      res.status(400).json({
+        error: err.message,
+      });
+      console.log(err);
+    }
+  };
+
+  listar = async (req, res) => {
+    try {
+      const listagem = await model.listar();
+      res.status(200).json({
+        data: listagem,
+      });
+    } catch (err) {
+      res.status(400).json({
+        error: "Não foi possivel listar",
+      });
+      console.log(err);
+    }
+  };
+
+  update = async (req, res) => {
+    try {
+      const { nome, senha, id } = req.body;
+      const usuario = {
+        nome,
+        senha,
+        id,
+      };
+      const update = await model.update(usuario);
+      res.status(200).json({
+        data: update,
+      });
+    } catch (err) {
+      res.status(400).json({
+        error: "Não foi possivel atualizar",
+      });
+      console.log(err);
+    }
+  };
+
+  apagar = async (req, res) => {
+    const { id } = req.params;
+    try {
+      const apg = await model.apagar(id);
+      res.status(200).json({
+        message: "Deletado com sucesso",
+      });
+    } catch (err) {
+      res.status(400).json({
+        error: "Não foi possivel deletar",
+      });
+      console.log(err);
+    }
+  };
 }
 
-exports.listar = async (req, res) =>{
-    try {
-        const listagem = await model.listar();
-        res.status(200).json({
-            data:listagem
-        })
-    } catch (err) {
-        res.status(400).json({
-            error:"Não foi possivel listar"
-        })
-        console.log(err)
-    }
-}
-
-exports.update = async(req,res) => {
-    try {
-        const {nome , senha, id} = req.body;
-        const usuario = {
-            nome,
-            senha,
-            id
-        }
-        const update = await model.update(usuario);
-        res.status(200).json({
-            data:update,
-        })
-    } catch (err) {
-        res.status(400).json({
-            error:"Não foi possivel atualizar"
-        })
-        console.log(err)
-    }
-}
-
-exports.apagar = async (req, res) => {
-    const {id} = req.params;
-    try {
-        const apg = await model.apagar(id);
-        res.status(200).json({
-            message:"Deletado com sucesso",
-        })
-    } catch (err) {
-        res.status(400).json({
-            error:"Não foi possivel deletar"
-        })
-        console.log(err)
-    }
-}
+export default new Controller();

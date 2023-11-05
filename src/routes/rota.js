@@ -1,8 +1,9 @@
-const express = require("express");
+import express from "express";
+import usuario from "./usuario.js";
 const rota = express.Router();
-const usuario = require("./usuario");
+
 
 rota.use("/usuario", usuario);
 
-module.exports = rota;
+export default rota;
 

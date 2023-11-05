@@ -1,8 +1,8 @@
-const { Pool } = require("pg");
-const dotenv = require("dotenv");
+import database from "pg";
+import dotenv from "dotenv";
 
 dotenv.config();
-
+const {Pool} = database;
 //const conexaoDB = process.env.DB_URL;
 
 const ssl = false;
@@ -13,9 +13,9 @@ const pool = new Pool({
     ssl, 
     user:"postgres",
     password:"postgres",
-    database:"financaNode",
+    database:"rural-radical",
     port:5432,
     host:"localhost"
 }) 
 
-module.exports = pool;
+export default pool;
