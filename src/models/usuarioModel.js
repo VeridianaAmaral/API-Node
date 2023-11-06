@@ -15,7 +15,21 @@ class Model {
         const resultado = await pool.query(query);
         return resultado;
     }
-    
+    /**
+     * 
+     * @param {*} tipo 
+     * @param {*} email 
+     * @returns 
+     */
+    findUserByUsername = async (tipo, email) => {
+        const query = {
+          text: `SELECT * FROM ${tipo} WHERE email = $1`,
+          values: [email]
+        };
+        const result = await pool.query(query);
+        return result.rows[0];
+      };
+      
      listar = async(tipo) =>{
         const query ={
             text: `SELECT * FROM ${tipo};`

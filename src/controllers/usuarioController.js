@@ -1,4 +1,6 @@
 import model from "../models/usuarioModel.js";
+import bcrypt from "bcrypt"
+import { generateToken } from "../utils/jwt.js";
 
 const validar = (usuario) => {
   let errors = [];
@@ -22,7 +24,7 @@ class Controller {
   cadastro = async (req, res) => {
     try {
       //Desestrutura o req.body para capturar os dados
-      const {
+      let {
         nome,
         email,
         senha,
@@ -35,6 +37,10 @@ class Controller {
         numero,
         consumidor,
       } = req.body;
+
+      const saltRounds = 10;
+      senha = await bcrypt.hash(senha, saltRounds);
+
       const usuario = {
         nome,
         email,
@@ -116,6 +122,41 @@ class Controller {
       console.log(err);
     }
   };
+
+  authenticateUser = async (req, res) => {
+  
+    try {
+      const {tipo, email, senha } = req.body;
+      console.log(tipo, email, senha)
+      const user = await model.findUserByUsername(tipo, email);
+    console.log(user);
+      if (!user) {
+        return res.status(401).send({
+          "result": false,
+          "content": "Usuário ou senha inválido",
+      });
+      }
+  
+      const isPasswordValid = await bcrypt.compare(senha, user.senha);
+  
+      if (!isPasswordValid) {
+        res.status(401).send({
+          "result": false,
+          "content": "Usuário ou senha inválido",
+      });
+      }
+  
+      const payload = {id: user.id, tipo: tipo};
+  
+      const token = generateToken(payload);
+  
+      res.status(200).json({ token });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
+
+
 }
 
 export default new Controller();
