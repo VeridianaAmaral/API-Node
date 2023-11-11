@@ -1,24 +1,7 @@
 import model from "../models/usuarioModel.js";
 import bcrypt from "bcrypt"
 import { generateToken } from "../utils/jwt.js";
-
-const validar = (usuario) => {
-  let errors = [];
-  for (const key in usuario) {
-    if (usuario.hasOwnProperty(key)) {
-      if (
-        usuario[key] === null ||
-        usuario[key] === undefined ||
-        usuario[key] === ""
-      ) {
-        errors.push(`${key} esta incorreto`);
-      }
-    }
-    if (errors.length > 0) {
-      throw new Error(errors);
-    }
-  }
-};
+import validar from "../utils/validar.js";
 
 class Controller {
   cadastro = async (req, res) => {

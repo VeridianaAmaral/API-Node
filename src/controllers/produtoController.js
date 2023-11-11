@@ -1,22 +1,5 @@
 import model from "../models/produtoModel.js";
-
-const validar = (produto) => {
-  let errors = [];
-  for (const key in produto) {
-    if (produto.hasOwnProperty(key)) {
-      if (
-        produto[key] === null ||
-        produto[key] === undefined ||
-        produto[key] === ""
-      ) {
-        errors.push(`${key} esta incorreto`);
-      }
-    }
-    if (errors.length > 0) {
-      throw new Error(errors);
-    }
-  }
-};
+import validar from "../utils/validar.js";
 
 class Controller {
   cadastro = async (req, res) => {
