@@ -7,6 +7,6 @@ rota.post("/cadastro", (req, res) =>{
 });
 rota.get("/listagem", (req,res)=>{
     controller.listar(req,res)
-})
+});
 
 export default rota;

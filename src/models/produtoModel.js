@@ -4,7 +4,7 @@ import crypt from "node:crypto"
 class Model {
      cadastro = async (produto) =>{
         // Desestruturação do objeto usuario
-        const {imagem, nome, categoria,} = produto;
+        const {imagem, nome, categoria} = produto;
         const id = crypt.randomUUID();
         const query = {
             text:`INSERT INTO produto(id, imagem, nome, categoria ) values($1, $2, $3, $4) returning *`,

@@ -20,7 +20,7 @@ class Controller {
       );
       res.status(201).json({
         message: "Inserido com sucesso",
-        data: resultado.rows[0],
+        data: venda,
       });
     } catch (err) {
       res.status(400).json({
