@@ -9,9 +9,9 @@ app.use(baseUrl, rota);
 
 pool.connect((err) => {
     if (err) {
-        console.log("Desconectado do banco"+ err);
+        console.log("[APP] Desconectado do banco"+ err);
     }else{
-        console.log("Conectado no banco");
+        console.log("[APP] Conectado no banco");
     }
 })
 

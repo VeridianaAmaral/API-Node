@@ -1,28 +1,13 @@
 import model from "../models/usuarioModel.js";
-
-const validar = (usuario) => {
-    let errors = []
-  for (const key in usuario) {
-    if (usuario.hasOwnProperty(key)) {
-      if (
-        usuario[key] === null ||
-        usuario[key] === undefined ||
-        usuario[key] === ""
-      ) {
-        errors.push(`${key} esta incorreto`)
-      }
-    }
-    if (errors.length > 0) {
-        throw new Error(errors);
-    }
-  }
-};
+import bcrypt from "bcrypt"
+import { generateToken } from "../utils/jwt.js";
+import validar from "../utils/validar.js";
 
 class Controller {
   cadastro = async (req, res) => {
     try {
       //Desestrutura o req.body para capturar os dados
-      const {
+      let {
         nome,
         email,
         senha,
@@ -35,6 +20,10 @@ class Controller {
         numero,
         consumidor,
       } = req.body;
+
+      const saltRounds = 10;
+      senha = await bcrypt.hash(senha, saltRounds);
+
       const usuario = {
         nome,
         email,
@@ -50,6 +39,7 @@ class Controller {
       };
       //valida o objeto do usuario para garantir que todos os dados foram preenchidos
       validar(usuario);
+      //Envia o objeto para a model e aguarda a resposta
       const resultado = await model.cadastro(usuario);
       console.log(
         resultado.rowCount > 0 ? "Inserido com sucesso" : "Sem alteração"
@@ -67,14 +57,15 @@ class Controller {
   };
 
   listar = async (req, res) => {
+    const {tipo} = req.params;
     try {
-      const listagem = await model.listar();
+      const listagem = await model.listar(tipo);
       res.status(200).json({
         data: listagem,
       });
     } catch (err) {
       res.status(400).json({
-        error: "Não foi possivel listar",
+        error: err.message,
       });
       console.log(err);
     }
@@ -94,26 +85,63 @@ class Controller {
       });
     } catch (err) {
       res.status(400).json({
-        error: "Não foi possivel atualizar",
+        error: err.message,
       });
       console.log(err);
     }
   };
 
-  apagar = async (req, res) => {
+  apagar = async (req, res, tipo) => {
     const { id } = req.params;
+    const table = tipo == "consumidor" ? 'consumidor' : 'produtor';
     try {
-      const apg = await model.apagar(id);
+      console.log(id, table)
+      const apg = await model.apagar(id, table);
       res.status(200).json({
         message: "Deletado com sucesso",
       });
     } catch (err) {
       res.status(400).json({
-        error: "Não foi possivel deletar",
+        error: err.message,
       });
       console.log(err);
     }
   };
+
+  authenticateUser = async (req, res) => {
+  
+    try {
+      const {tipo, email, senha } = req.body;
+      console.log(tipo, email, senha)
+      const user = await model.findUserByUsername(tipo, email);
+    console.log(user);
+      if (!user) {
+        return res.status(401).send({
+          "result": false,
+          "content": "Usuário ou senha inválido",
+      });
+      }
+  
+      const isPasswordValid = await bcrypt.compare(senha, user.senha);
+  
+      if (!isPasswordValid) {
+        res.status(401).send({
+          "result": false,
+          "content": "Usuário ou senha inválido",
+      });
+      }
+  
+      const payload = {id: user.id, tipo: tipo};
+  
+      const token = generateToken(payload);
+  
+      res.status(200).json({ token });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
+
+
 }
 
 export default new Controller();
