@@ -91,10 +91,12 @@ class Controller {
     }
   };
 
-  apagar = async (req, res) => {
+  apagar = async (req, res, tipo) => {
     const { id } = req.params;
+    const table = tipo == "consumidor" ? 'consumidor' : 'produtor';
     try {
-      const apg = await model.apagar(id);
+      console.log(id, table)
+      const apg = await model.apagar(id, table);
       res.status(200).json({
         message: "Deletado com sucesso",
       });

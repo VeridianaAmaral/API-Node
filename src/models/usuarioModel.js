@@ -23,7 +23,7 @@ class Model {
      */
     findUserByUsername = async (tipo, email) => {
         const query = {
-          text: `SELECT * FROM ${tipo} WHERE email = $1`,
+          text: `SELECT * FROM ${tipo} WHERE email = $1 and ativo = true`,
           values: [email]
         };
         const result = await pool.query(query);
@@ -60,9 +60,9 @@ class Model {
         return editar.rows;
     }
     
-     apagar = async (id) =>{
+     apagar = async (id, table) =>{
         const query = {
-            text:"delete from usuario where id = $1",
+            text:`update ${table} SET ativo = NOT ativo where id = $1`,
             values:[id]
         }
         const deletar = await pool.query(query);

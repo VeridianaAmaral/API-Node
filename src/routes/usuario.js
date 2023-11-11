@@ -12,8 +12,11 @@ rota.get("/listagem/:tipo", auth,  (req,res)=>{
 rota.put("/update", auth,  (req,res) => {
     controller.update(req, res)
 });
-rota.delete("/deletar/:id", auth, (req,res) =>{
-    controller.apagar(req,res)
+rota.delete("/deletar/consumidor/:id", auth, (req,res) =>{
+    controller.apagar(req,res, "consumidor")
+});
+rota.delete("/deletar/produtor/:id", auth, (req,res) =>{
+    controller.apagar(req,res, "produtor")
 });
 
 rota.post("/login", (req, res) => {
