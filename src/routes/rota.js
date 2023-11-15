@@ -11,7 +11,7 @@ console.log("[ROUTER] Starting routes....");
 rota.use("/usuario", usuario);
 rota.use("/produto", auth, produto);
 rota.use("/venda", auth, venda);
-rota.use("/anuncio", auth, anuncio);
+rota.use("/anuncio", anuncio);
 
 console.log("[ROUTER] Done!");
 

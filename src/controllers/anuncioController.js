@@ -35,6 +35,7 @@ class Controller {
   listar = async (req, res) => {
     try {
       const listagem = await model.listar();
+      res.header("Access-Control-Allow-Origin", "*");
       res.status(200).json({
         data: listagem,
       });
