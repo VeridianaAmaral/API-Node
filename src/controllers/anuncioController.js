@@ -5,13 +5,14 @@ class Controller {
   cadastro = async (req, res) => {
     try {
       //Desestrutura o req.body para capturar os dados
-      const { valor, qtt, produto_id } = req.body;
+      const { valor, qtt, produto_id, unidade } = req.body;
       const produtor_id = req.user.id;
       const anuncio = {
         valor,
         qtt,
         produtor_id,
         produto_id,
+        unidade
       };
       //valida o objeto do usuario para garantir que todos os dados foram preenchidos
       validar(anuncio);
