@@ -57,11 +57,19 @@ create table anuncio(
 	id varchar(256) not null primary key,
 	valor numeric(10,2) not null,
 	qtt numeric(10,3) not null,
+	 unidade varchar(256),
 	produtor_id varchar references produtor(id),
 	produto_id varchar references produto(id),
 	data_cad TIMESTAMP default now(),
 	ativo boolean default true not null
 );
+
+select pd.nome, pt.nome, an.valor, an.qtt
+from anuncio an
+join produto pt
+on pt.id = an.produto_id
+join produtor pd
+on pd.id = an.produtor_id
 
 insert into anuncio(id, valor, qtt, produtor_id, produto_id) 
 values('urjdjduriwue', 239.45, 23.00, '6a7176bd-ac99-429e-92d0-a9afea33922e',
@@ -93,13 +101,13 @@ select inserirVenda('919a353c-d818-43bd-9342-3fcc417874da',
 	   '6a7176bd-ac99-429e-92d0-a9afea33922e',
 	   'Preparando', 234.98, 23.00, 'urjdjduriwue', 'hjhjhjhghg', 'dfgdfgdfg' )
 	   
-
 create type listaVendas as (
-venda_status status,
+	venda_status status,
     qtt numeric,
     valor numeric,
     produto_nome varchar,
-    produtor_nome varchar
+    produtor_nome varchar,
+	consumidor_nome varchar
 )
 
 CREATE OR REPLACE FUNCTION listarVendas(id_consumidor varchar, status_venda status)
@@ -113,7 +121,8 @@ BEGIN
             it.qtt,
             it.valor,
             pr.nome as produto_nome,
-            pd.nome as produtor_nome
+            pd.nome as produtor_nome,
+			cm.nome as consumidor_nome
         FROM
             venda v
         JOIN
@@ -124,8 +133,9 @@ BEGIN
             produto pr ON an.produto_id = pr.id
         JOIN
             produtor pd ON an.produtor_id = pd.id
+		JOIN consumidor cm ON v.consumidor_id = cm.id
         WHERE
-            v.consumidor_id = id_consumidor
+            v.consumidor_id = id_consumidor or v.produtor_id = id_consumidor
             AND v.status = status_venda
     LOOP
         RETURN NEXT saida;
@@ -137,3 +147,5 @@ $$ LANGUAGE plpgsql;
 
 select  * from listarVendas('919a353c-d818-43bd-9342-3fcc417874da', 'Preparando');
 
+select * from produtor
+select * from consumidor
